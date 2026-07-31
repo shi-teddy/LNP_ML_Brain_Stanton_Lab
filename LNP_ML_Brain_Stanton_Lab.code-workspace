@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "LNP_ML_Brain_Stanton_Lab",
+			"path": "."
+		},
+		{
+			"name": "Brain_Data_in_vivo_only_all_plus_original_for_in_silico_screen",
+			"path": "../../../Codex/LNP_ML/good_models/Brain_Data_in_vivo_only_all_plus_original_for_in_silico_screen"
+		}
+	],
+	"settings": {}
+}
