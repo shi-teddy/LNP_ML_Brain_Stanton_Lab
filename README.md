@@ -217,3 +217,89 @@ python main_script.py predict small_test_split_with_ultra_held_out_for_in_silico
 ```
 
 Running all code for training a model based on all data in this repository can take ~3 hours with CUDA GPU or ~24+ hours with CPU only, depending on your computer specifications. The smaller toy dataset discussed immediately above should take significantly less time at ~10 minutes to run with CUDA GPU or ~3 hours with CPU only.
+
+
+#Teddy's Notes
+
+# Comparison of Two LNP Prediction Models
+
+## Introduction
+
+Inside this repo are two models called Model 1 and Model 2.
+
+Both models predict a normalized delivery score using the ionizable lipid structure and formulation details, such as lipid ratios, delivery target, administration route, cargo, and helper lipid. The predicted value is a relative score, not a direct measurement of brain delivery.
+
+## Model performance
+
+| Evaluation set | Model | Pearson | Spearman | RMSE |
+|---|---|---:|---:|---:|
+| All 8,805 held-out rows | Model 2 | 0.434 | 0.363 | 0.901 |
+| All 8,805 held-out rows | Model 1 | **0.481** | **0.426** | **0.877** |
+| 92 brain-only rows | Model 2 | −0.175 | −0.067 | 1.097 |
+| 92 brain-only rows | Model 1 | −0.159 | −0.077 | **1.072** |
+
+Pearson shows how closely the predicted values match the measured values. Spearman shows how well the model ranks the lipids. A better model should have higher positive correlations and a lower RMSE.
+
+Model 1 performed better on the full dataset. However, both models had negative correlations on the brain-only data, meaning neither one reliably predicted the brain-delivery results.
+
+## Top predictions from the full screen
+
+These were the five highest-ranked candidates in each saved screening result.
+
+| Rank | Model 2 | Model 1 |
+|---:|---|---|
+| 1 | NT1-O18B | RM_branched_ester_M59_R16 |
+| 2 | NT1-O16B | RM_branched_ester_M18_R16 |
+| 3 | Li_Thiolyne_A1C16 | RM_branched_ester_M15_R16 |
+| 4 | Li_Thiolyne_B1C16 | RM_branched_ester_M63_R16 |
+| 5 | Akinc_Michael_Amine_60_N18 | RM_branched_ester_M62_R16 |
+
+The two models favored different types of lipids. Model 2’s top results came from several lipid families, while Model 1’s top five were all from the RM branched-ester family.
+
+## Predictions for known brain-related lipids
+
+### Model 2
+
+Model 2 ranked the following lipids among 7,104 screened candidates:
+
+| Lipid | Rank |
+|---|---:|
+| C14-306 | 17 |
+| cKK-E12/Lipid 8 | 18 |
+| C12-200 | 19–20 |
+| 306-N16B | 140 |
+| SM-102 | 733 |
+| C14-490 | 1,177 |
+| ALC-0315 | 1,332 |
+| MC3 | Approximately 1,903–1,964 |
+| MK16 | 6,651 |
+
+### Model 1
+
+Model 1 ranked the following lipids among the 7,100 candidates in its saved screen:
+
+| Lipid | Rank |
+|---|---:|
+| cKK-E12/Lipid 8 | 124 |
+| 306-N16B | 292 |
+| C12-200 | 380 |
+| SM-102 | 883 |
+| ALC-0315 | 1,327 |
+| MC3 | Approximately 1,890–1,916 |
+| MK16 | 6,871 |
+
+C14-306 and C14-490 were not included in Model 1’s saved screen, so there are no Model 1 ranks available for them.
+
+## Interpretation
+
+Model 1 is the better general model. It had stronger Pearson and Spearman correlations and a lower error across the full dataset.
+
+Model 2 was more encouraging when looking at several known brain-related lipids. It placed C14-306, cKK-E12, and C12-200 near the top of its screen. However, those rankings need to be treated carefully because Model 2 still performed poorly on the held-out brain-only data.
+
+The two models also did not agree strongly on which candidates were best. This suggests that their highest-ranked predictions are still uncertain.
+
+## Conclusion
+
+Model 1 is the stronger general predictor, producing better correlations and lower error across the complete 8,805-row held-out dataset. Model 2 produced some encouraging brain-screening rankings, particularly for C14-306, cKK-E12, and C12-200, but its held-out brain performance does not support using those rankings as definitive evidence.
+
+Overall, the project currently has **one reasonably strong general-LNP model and one exploratory brain-LNP model**. Neither model has shown that it can reliably predict new brain-delivery lipids. Improving the amount and variety of brain-specific training data will likely be more important than choosing between these two models.
